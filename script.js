@@ -15,16 +15,19 @@
 // THEN the password is either displayed in an alert or written to the page
 
 
-
+//returns a random integer from min to  max
 function randomInt(min, max) {
   if (!max) {
     max = min
     min = 0
   }
-  var rand = Math.random()
+
+  //insert random number
+  let rand = Math.random()
   return Math.floor(min*(1 - rand)+ rand*max)
 }
 
+//returns a random entry from a list
 function getRandomItem(list) {
   return list[randomInt(0, list.length - 1)]
 }
@@ -32,6 +35,7 @@ function getRandomItem(list) {
 // this function is going to take our users input
 function generatePassword() {
 
+//loop 
 while (true) {
 
  var userInput = window.prompt('What do you want the length for your password to be?')
