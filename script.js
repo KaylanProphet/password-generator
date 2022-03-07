@@ -1,3 +1,4 @@
+// The Password Generator will provide a password with 8-128 characters based on criteria the user specifies.
 // GIVEN I need a new, secure password
 // WHEN I click the button to generate a password
 // THEN I am presented with a series of prompts for password criteria
@@ -14,104 +15,85 @@
 // WHEN the password is generated
 // THEN the password is either displayed in an alert or written to the page
 
+//Assignment Code + Event Listener to prompt questions when the Generate button is pushed
+document.querySelector("#generate").addEventListener("click", writePassword);
 
-//returns a random integer from min to  max
-function randomInt(min, max) {
-  if (!max) {
-    max = min
-    min = 0
-  }
+// Character Arrays 
+var number = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+var specialChar = ["!", "%", "&", ",", "*", "+", "-", ".", "/", "<", ">", "?","~"];
+var alphaLower = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+var alphaUpper = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 
-  //insert random number
-  let rand = Math.random()
-  return Math.floor(min*(1 - rand)+ rand*max)
-}
+// Variable Declaratiosn 
+var confirmLength = "";
+var confirmSpecialCharacter;
+var confirmNumericCharacter;
+var confirmUpperCase;
+var confirmLowerCase;
 
-//returns a random entry from a list
-function getRandomItem(list) {
-  return list[randomInt(0, list.length - 1)]
-}
-
-// this function is going to take our users input
+// Prompt to confirm how many characters the user would like in the password
 function generatePassword() {
+  var confirmLength = (prompt("How many characters would you like your password to contain?"));
 
-//collect user input till it is validated or exit the prompts
-while (true) {
+  // Loop to return prompt if answer is outside the parameters 
+  while(confirmLength <= 7 || confirmLength >= 129) {
+      alert("Password length must be between 8-128 characters Try again");
+      var confirmLength = (prompt("How many characters would you like your password to contain?"));
+      } 
 
- var userInput = window.prompt('What do you want the length for your password to be?')
+      // Repeat back how many charactes the user will have  
+      alert(`Your password will have ${confirmLength} characters`);
 
- //user exited the prompt
- if (userInput === null) {
-   return
- }
+    // Determine the parameters of the password 
+    var confirmSpecialCharacter = confirm("Click OK to confirm if you would like to include special characters");
+    var confirmNumericCharacter = confirm("Click OK to confirm if you would like to include numeric characters");    
+    var confirmLowerCase = confirm("Click OK to confirm if you would like to include lowercase characters");
+    var confirmUpperCase = confirm("Click OK to confirm if you would like to include uppercase characters");
+      // Loop to return prompt if answer has chosen no parameters 
+      while(confirmUpperCase === false && confirmLowerCase === false && confirmSpecialCharacter === false && confirmNumericCharacter === false) {
+        alert("You must choose at least one parameter");
+        var confirmSpecialCharacter = confirm("Click OK to confirm if you would like to include special characters");
+        var confirmNumericCharacter = confirm("Click OK to confirm if you would like to include numeric characters");    
+        var confirmLowerCase = confirm("Click OK to confirm if you would like to include lowercase characters");
+        var confirmUpperCase = confirm("Click OK to confirm if you would like to include uppercase characters");   
+    } 
 
- var passwordLength = parseInt(userInput)
+    // Assign an action to the password parameters
+    var passwordCharacters = []
+    
+    if (confirmSpecialCharacter) {
+      passwordCharacters = passwordCharacters.concat(specialChar)
+    }
 
-  if (isNaN(passwordLength)) {
-   window.alert('Please provide an actual number')
-} else if (passwordLength <8 || passwordLength > 128) {
-  window.alert('Invalid password length. Please provide a numeric value between 8 and 128 characters.')
-} else {
-  break
+    if (confirmNumericCharacter) {
+      passwordCharacters = passwordCharacters.concat(number)
+    }
+      
+    if (confirmLowerCase) {
+      passwordCharacters = passwordCharacters.concat(alphaLower)
+    }
+
+    if (confirmUpperCase) {
+      passwordCharacters = passwordCharacters.concat(alphaUpper)
+    }
+
+    console.log(passwordCharacters)
+
+  // Empty string to be filled based on for loop selecting random characters from the array
+  var randomPassword = ""
+      
+	// Code to create random password based on chosen paramaters
+  for (var i = 0; i < confirmLength; i++) {
+    randomPassword = randomPassword + passwordCharacters[Math.floor(Math.random() * passwordCharacters.length)];
+    console.log(randomPassword)
+  }
+  return randomPassword;
 }
 
-
-//prompts for the user to select characters for password
- var userWantsNumbers = window.confirm('Would you like numbers in your password?')
- var userWantsSymbols = window.confirm('Would you like symbols in your password?')
- var userWantsLowercase = window.confirm('Would you like lowerase letters in your password?')
- var userWantsUppercase = window.confirm('Would you like uppercase in your password?')
-
- //list of available character types
- var numberList = ["0","1","2","3","4","5","6","7","8","9"]
- var symbolList = ["!"."@","#","$","%","&","?"]
- var lowercaseList = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
- var uppercaseList = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
-
-
- //options cart to compile the selected list from the user
- var optionsCart = []
-
- if (userWantsNumbers === true) {
- optionsCart.push(numberList)
- }
-
- if (userWantsSymbols === true) {
-   optionsCart.push(symbolList)
- }
-
- if (userWantsLowercase === true) {
-   optionsCart.push (lowercaseList)
- }
-
- if (userWantsUppercase ===true) {
-   optionsCart.push (uppercaseList)
- }
-
- if (optionsCart.length === 0)
-  optionsCart.push(lowercaseList)
-
-
-
- var generatePassword = ""
-
- for (var i = 0; i < passwordLength; i++) {
-  var randomList = getRandomItem(optionsCart)
-  var randomChar = getRadomItem(randomList)
-  generatePassword += randomChar
- }
-
- return generatePassword
-
-// Write password to the #password input
+// Write password to the #password input to display on the html page
 function writePassword() {
   var password = generatePassword();
   var passwordText = document.querySelector("#password");
 
-  if (password) {
-   passwordText.value = password;
-   }
+  passwordText.value = password;
 }
-
-// Add event listener to generate button
-generateBtn.addEventListener("click", writePassword);
